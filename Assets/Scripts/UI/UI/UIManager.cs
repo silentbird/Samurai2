@@ -9,6 +9,21 @@ namespace UIFrame
     {
         private readonly Dictionary<UIId, GameObject> _prefabDictionary = new Dictionary<UIId, GameObject>();
         private readonly Stack<UIBase> _uiStack = new Stack<UIBase>();
+        private UILayerManager _layerManager;
+
+        private void Awake()
+        {
+            _layerManager = GetComponent<UILayerManager>();
+            if (_layerManager == null)
+            {
+                Debug.LogError("can not find UILayerManager");
+            }
+        }
+
+        private void Start()
+        {
+            Show(UIId.MainMenu);
+        }
 
         public void Show(UIId id)
         {
@@ -21,7 +36,11 @@ namespace UIFrame
 
             UIBase uiScript = GetUIScript(ui, id);
             if (uiScript == null)
+            {
+                Debug.LogError("uiScript is null");
                 return;
+            }
+
             InitUI(uiScript);
 
             if (uiScript.Layer == UILayer.BASIC_UI)
@@ -71,6 +90,7 @@ namespace UIFrame
             {
                 Transform ui = uiScript.transform;
                 //根据层级添加到对应父物体下
+                ui.SetParent(_layerManager.GetLayerObject(uiScript.Layer));
                 ui.localPosition = Vector3.zero;
             }
         }
@@ -79,7 +99,15 @@ namespace UIFrame
         {
             if (!_prefabDictionary.ContainsKey(id) || _prefabDictionary[id] == null)
             {
-                _prefabDictionary[id] = LoadManager.Instance.Load<GameObject>(Path.UIPath, id.ToString());
+                GameObject prefab = LoadManager.Instance.Load<GameObject>(Path.UIPath, id.ToString());
+                if (prefab != null)
+                {
+                    _prefabDictionary[id] = Instantiate(prefab);
+                }
+                else
+                {
+                    Debug.LogError("can not find prefab:" + id);
+                }
             }
 
             return _prefabDictionary[id];
@@ -100,7 +128,7 @@ namespace UIFrame
 
         private UIBase AddUIScript(GameObject prefab, UIId id)
         {
-            string scriptName = id + ConstValue.UI_SCRIPT_POSTFIX;
+            string scriptName = $"{ConstValue.NAMESPCAE_NAME}.{id}{ConstValue.UI_SCRIPT_POSTFIX}";
             Type ui = Type.GetType(scriptName);
             if (ui == null)
             {

@@ -132,9 +132,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 41496503}
-  - component: {fileID: 41496504}
   m_Layer: 5
-  m_Name: BasicUI
+  m_Name: BASIC_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,18 +158,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -1180, y: -620}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &41496504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41496502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 785aa95b3fdbb78499fed677e9f0c00f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &246940759
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,7 +234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 545061286}
   m_Layer: 5
-  m_Name: TopUI
+  m_Name: TOP_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -460,6 +447,8 @@ GameObject:
   - component: {fileID: 1193485455}
   - component: {fileID: 1193485454}
   - component: {fileID: 1193485453}
+  - component: {fileID: 1193485458}
+  - component: {fileID: 1193485457}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -550,6 +539,30 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1193485457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193485452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b993da5d2b92646b30ffa5ed35d3db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1193485458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193485452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 785aa95b3fdbb78499fed677e9f0c00f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1838939329
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,7 +573,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1838939330}
   m_Layer: 5
-  m_Name: OverlayUI
+  m_Name: OVERLAY_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
