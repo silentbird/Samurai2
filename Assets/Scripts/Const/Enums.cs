@@ -28,4 +28,10 @@ namespace Const
         MainMenu,
         StartGame
     }
+
+    public enum UIEffect
+    {
+        VIEW_EFFECT,
+        OTHERS_EFFECT
+    }
 }

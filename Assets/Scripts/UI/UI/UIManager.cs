@@ -10,14 +10,14 @@ namespace UIFrame
         private readonly Dictionary<UIId, GameObject> _prefabDictionary = new Dictionary<UIId, GameObject>();
         private readonly Stack<UIBase> _uiStack = new Stack<UIBase>();
         private UILayerManager _layerManager;
+        private UIEffectManager _effectManager;
 
         private void Awake()
         {
             _layerManager = GetComponent<UILayerManager>();
-            if (_layerManager == null)
-            {
-                Debug.LogError("can not find UILayerManager");
-            }
+            _effectManager = GetComponent<UIEffectManager>();
+            if (_layerManager == null) Debug.LogError("can not find UILayerManager");
+            if (_effectManager == null) Debug.LogError("can not find UIEffectManager");
         }
 
         private void Start()
@@ -54,6 +54,7 @@ namespace UIFrame
             }
 
             _uiStack.Push(uiScript);
+            _effectManager.Show(ui.transform);
         }
 
         private void Hide()
@@ -61,6 +62,7 @@ namespace UIFrame
             if (_uiStack.Count != 0)
             {
                 _uiStack.Peek().uiState = UIState.HIDE;
+                _effectManager.Hide(_uiStack.Peek().transform);
             }
         }
 
@@ -68,15 +70,14 @@ namespace UIFrame
         {
             if (_uiStack.Count > 1)
             {
+                UIBase hideUI = _uiStack.Pop();
                 if (_uiStack.Peek().Layer == UILayer.BASIC_UI)
                 {
-                    _uiStack.Pop().uiState = UIState.HIDE;
                     _uiStack.Peek().uiState = UIState.SHOW;
                 }
-                else
-                {
-                    _uiStack.Pop().uiState = UIState.HIDE;
-                }
+
+                hideUI.uiState = UIState.HIDE;
+                _effectManager.Hide(hideUI.transform);
             }
             else
             {
@@ -92,6 +93,7 @@ namespace UIFrame
                 //根据层级添加到对应父物体下
                 ui.SetParent(_layerManager.GetLayerObject(uiScript.Layer));
                 ui.localPosition = Vector3.zero;
+                ui.localScale = Vector3.one;
             }
         }
 
