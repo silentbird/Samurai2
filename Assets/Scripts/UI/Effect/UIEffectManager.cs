@@ -8,6 +8,8 @@ namespace UIFrame
     {
         public void Show(Transform ui)
         {
+            if (ui == null) return;
+
             foreach (UIEffectBase effectBase in ui.GetComponentsInChildren<UIEffectBase>(true))
             {
                 effectBase.Enter();
@@ -16,6 +18,8 @@ namespace UIFrame
 
         public void Hide(Transform ui)
         {
+            if (ui == null) return;
+
             foreach (UIEffectBase effectBase in ui.GetComponentsInChildren<UIEffectBase>(true))
             {
                 effectBase.Exit();
@@ -32,7 +36,7 @@ namespace UIFrame
                 }
             }
         }
-        
+
         public void AddViewEffectExitListener(Transform ui, Action exitComplete)
         {
             foreach (UIEffectBase effectBase in ui.GetComponentsInChildren<UIEffectBase>(true))

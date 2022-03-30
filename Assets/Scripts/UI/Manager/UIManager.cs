@@ -9,44 +9,36 @@ namespace UIFrame
     {
         private readonly Dictionary<UIId, GameObject> _prefabDictionary = new Dictionary<UIId, GameObject>();
         private readonly Stack<UIBase> _uiStack = new Stack<UIBase>();
-        private UILayerManager _layerManager;
-        private UIEffectManager _effectManager;
-
-        private void Awake()
-        {
-            _layerManager = GetComponent<UILayerManager>();
-            _effectManager = GetComponent<UIEffectManager>();
-            if (_layerManager == null) Debug.LogError("can not find UILayerManager");
-            if (_effectManager == null) Debug.LogError("can not find UIEffectManager");
-        }
+        private Func<UILayer, Transform> GetLayerObject;
 
         private void Start()
         {
             Show(UIId.MainMenu);
         }
 
-        public void Show(UIId id)
+        public Tuple<Transform, Transform> Show(UIId id)
         {
             GameObject ui = GetPrefabObject(id);
             if (ui == null)
             {
                 Debug.LogError("can not find prefab:" + id + "!");
-                return;
+                return null;
             }
 
             UIBase uiScript = GetUIScript(ui, id);
             if (uiScript == null)
             {
                 Debug.LogError("uiScript is null");
-                return;
+                return null;
             }
 
             InitUI(uiScript);
 
+            Transform hideUI = null;
             if (uiScript.Layer == UILayer.BASIC_UI)
             {
                 uiScript.uiState = UIState.SHOW;
-                Hide();
+                hideUI = Hide();
             }
             else
             {
@@ -54,35 +46,43 @@ namespace UIFrame
             }
 
             _uiStack.Push(uiScript);
-            _effectManager.Show(ui.transform);
+
+            return new Tuple<Transform, Transform>(ui.transform, hideUI);
         }
 
-        private void Hide()
+        private Transform Hide()
         {
             if (_uiStack.Count != 0)
             {
-                _uiStack.Peek().uiState = UIState.HIDE;
-                _effectManager.Hide(_uiStack.Peek().transform);
+                var hideUI = _uiStack.Peek();
+                hideUI.uiState = UIState.HIDE;
+                return hideUI.transform;
             }
+
+            return null;
         }
 
-        public void Back()
+        public Tuple<Transform, Transform> Back()
         {
+            UIBase showUI = null;
+            UIBase hideUI = null;
             if (_uiStack.Count > 1)
             {
-                UIBase hideUI = _uiStack.Pop();
-                if (_uiStack.Peek().Layer == UILayer.BASIC_UI)
+                hideUI = _uiStack.Pop();
+                showUI = _uiStack.Peek();
+                if (showUI.Layer == UILayer.BASIC_UI)
                 {
-                    _uiStack.Peek().uiState = UIState.SHOW;
+                    showUI.uiState = UIState.SHOW;
                 }
 
                 hideUI.uiState = UIState.HIDE;
-                _effectManager.Hide(hideUI.transform);
             }
             else
             {
                 Debug.LogError("uiStack has one or no element");
             }
+
+            return new Tuple<Transform, Transform>(showUI?.transform, hideUI?.transform);
         }
 
         private void InitUI(UIBase uiScript)
@@ -91,7 +91,7 @@ namespace UIFrame
             {
                 Transform ui = uiScript.transform;
                 //根据层级添加到对应父物体下
-                ui.SetParent(_layerManager.GetLayerObject(uiScript.Layer));
+                ui.SetParent(GetLayerObject?.Invoke(uiScript.Layer));
                 ui.localPosition = Vector3.zero;
                 ui.localScale = Vector3.one;
             }
@@ -139,6 +139,16 @@ namespace UIFrame
             }
 
             return prefab.AddComponent(ui) as UIBase;
+        }
+
+        public void AddGetLayerObjectListener(Func<UILayer, Transform> fun)
+        {
+            if (fun == null)
+            {
+                Debug.LogError("GetLayerObject function can not be null");
+                return;
+            }
+            GetLayerObject = fun;
         }
     }
 }
